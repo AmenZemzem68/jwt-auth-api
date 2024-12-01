@@ -24,9 +24,14 @@ namespace JwtAuthApi.Controllers
             {
                 return BadRequest();
             }
-            var user = await _context.Users.FirstOrDefaultAsync(x  => x.Email == userObject.Email && x.Password == userObject.Password);
+            var user = await _context.Users.FirstOrDefaultAsync(x  => x.Email == userObject.Email);
             if(user == null) {
                 return NotFound(new {Message = "Not Found !"});
+            }
+
+            if(!PasswordHasher.VerifyPassword(userObject.Password, user.Password))
+            {
+                return BadRequest(new { Message = "Wrong password !" });
             }
             return Ok(new {Message = "Connected successfully!"});
         }
