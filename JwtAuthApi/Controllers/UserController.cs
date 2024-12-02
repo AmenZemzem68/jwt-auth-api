@@ -1,6 +1,7 @@
 ﻿using JwtAuthApi.Context;
 using JwtAuthApi.Helper;
 using JwtAuthApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,12 @@ namespace JwtAuthApi.Controllers
         {
             _context = appDbContext;
         }
-
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<User>> GetAllUsers()
+        {
+            return Ok( await _context.Users.ToListAsync() );
+        }
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromBody] User userObject)
         {
@@ -85,7 +91,7 @@ namespace JwtAuthApi.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = identity,
-                Expires = DateTime.Now.AddDays(1),
+                Expires = DateTime.Now.AddSeconds(10),
                 SigningCredentials = credentials
             };
             var token = JwtTokenHandler.CreateToken(tokenDescriptor);
