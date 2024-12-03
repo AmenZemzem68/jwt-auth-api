@@ -36,7 +36,7 @@ namespace JwtAuthApi.Controllers
             }
             var user = await _context.Users.FirstOrDefaultAsync(x  => x.Email == userObject.Email);
             if(user == null) {
-                return NotFound(new {Message = "Not Found !"});
+                return NotFound(new {Message = "User doesn't exist !"});
             }
 
             if(!PasswordHasher.VerifyPassword(userObject.Password, user.Password))
@@ -91,7 +91,7 @@ namespace JwtAuthApi.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = identity,
-                Expires = DateTime.Now.AddSeconds(10),
+                Expires = DateTime.Now.AddDays(1),
                 SigningCredentials = credentials
             };
             var token = JwtTokenHandler.CreateToken(tokenDescriptor);
